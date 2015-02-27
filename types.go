@@ -32,8 +32,26 @@ type GfxContext interface {
     DrawEllipse(rect image.Rectangle, color color.Color, thickness float32) (ret int)
 }
 
+type Measurement interface {
+    Pixels(DPI int) int
+}
+
+type Pixel struct {
+    dot int
+}
+
+type Inch struct {
+    dot float64
+}
+
+type Millimeter struct {
+    dot float64
+}
+
 type Printer interface {
     CleanUp()
+
+    DPI() int
 
     IsPrinterReady() uint
     WaitForPrinter(timeout time.Duration)

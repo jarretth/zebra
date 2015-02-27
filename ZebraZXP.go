@@ -89,6 +89,10 @@ func (z *ZebraZXP) IsPrinterReady() uint {
     return uint(ret)
 }
 
+func (z *ZebraZXP) DPI() int {
+    return ZXP13_DPI
+}
+
 func (z *ZebraZXP) EjectCard() uint {
     z.getPrinterHandle()
     ret, _ := zebrazxp13.ZBRPRNEjectCard(zebrazxp13.Handle(z.printerHandle), z.prn_type)
