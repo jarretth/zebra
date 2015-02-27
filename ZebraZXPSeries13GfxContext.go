@@ -1,25 +1,16 @@
 package zebra
 
 import (
+    "github.com/jarretth/zebrazxp13"
     "image"
     "image/color"
-    zebrazxp13 "github.com/jarretth/zebrazxp13"
 )
-
-type ZebraZXPSeries13GfxContext struct {
-    graphicsHandle GraphicsHandle
-}
 
 func newZXPSeries13GraphicsContext(handle GraphicsHandle) (*ZebraZXPSeries13GfxContext) {
     context := &ZebraZXPSeries13GfxContext {
         graphicsHandle: handle,
     }
     return context
-}
-
-func getColor(color color.Color) uint32 {
-    r,  g, b, _ := color.RGBA()
-    return uint32((r << 16) | (g << 8) | b);
 }
 
 func (g *ZebraZXPSeries13GfxContext) DrawBarcode(location image.Point, rotation zebrazxp13.BarCodeRotation, barcodetype zebrazxp13.BarCodeType, barwidthratio zebrazxp13.BarCodeWidth, barcodemultiplier int, barcodeheight int, textunder zebrazxp13.BarCodeTextUnder, barcodedata string) (ret int) {

@@ -1,35 +1,11 @@
 package zebra
 import (
-    "fmt"
-    "image"
-    "image/color"
+    "github.com/jarretth/zebrazxp13"
     "runtime"
     "time"
-    "github.com/jarretth/zebrazxp13"
 )
 
-type PrinterHandle zebrazxp13.Handle
-type GraphicsHandle zebrazxp13.Handle
-
-type ZebraZXP struct {
-    printerName string
-    prn_type uint
-    printerHandle PrinterHandle
-    graphicsHandle GraphicsHandle
-}
-
-type GfxContext interface {
-    DrawBarcode(location image.Point, rotation zebrazxp13.BarCodeRotation, barcodetype zebrazxp13.BarCodeType, barwidthratio zebrazxp13.BarCodeWidth, barcodemultiplier int, barcodeheight int, textunder zebrazxp13.BarCodeTextUnder, barcodedata string) (ret int)
-    DrawText(x uint, y uint, text string, font string, fontsize uint, fontstyle zebrazxp13.TextFontStyle, color color.Color) (ret int)
-    DrawTextRectangle(rect image.Rectangle, alignment zebrazxp13.TextAlignment, text string, font string, fontsize uint, fontstyle zebrazxp13.TextFontStyle, color color.Color) (ret int)
-    DrawLine(start image.Point, end image.Point, color color.Color, thickness float32) (ret int)
-    DrawRectangle(rect image.Rectangle, color color.Color, thickness float32) (ret int)
-    DrawEllipse(rect image.Rectangle, color color.Color, thickness float32) (ret int)
-}
-
-type GfxCallback func(GfxContext)
-
-func New(printerName string) *ZebraZXP {
+func NewZebraZXP(printerName string) *ZebraZXP {
     printer := &ZebraZXP {
         printerName: printerName,
     }
@@ -119,11 +95,29 @@ func (z *ZebraZXP) EjectCard() uint {
     return uint(ret)
 }
 
-func (z *ZebraZXP) WaitForPrinter() {
+func (z *ZebraZXP) WaitIndefinitelyForPrinter() {
+    z.WaitForPrinter(WAIT_NO_TIMEOUT)
+}
+
+func (z *ZebraZXP) WaitForPrinter(timeout time.Duration) {
+    var elapsed time.Duration = 0
+    var wait time.Duration    = time.Second / 2
     for ;; {
-        time.Sleep(time.Second/2)
+        time.Sleep(wait)
+        elapsed += wait
         if z.IsPrinterReady() == 1 {
             break
+        }
+        if timeout != WAIT_NO_TIMEOUT {
+            if elapsed >= timeout {
+                panic(ERR_TIMEOUT)
+            }
+            if (elapsed + wait) > timeout {
+                wait = timeout - elapsed
+                if wait <= time.Millisecond {
+                    wait = time.Millisecond
+                }
+            }
         }
     }
 }
@@ -153,14 +147,4 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
     z.printAndClearGraphicsBuffer()
 
     return 1
-}
-
-func GetPrinterSDKVersion() (version string) {
-    major,minor,engLevel := zebrazxp13.ZBRPRNGetSDKVer()
-    return fmt.Sprintf("%d.%d.%d", major, minor, engLevel)
-}
-
-func GetGraphicsSDKVersion() (version string) {
-    major,minor,engLevel := zebrazxp13.ZBRGDIGetSDKVer()
-    return fmt.Sprintf("%d.%d.%d", major, minor, engLevel)
 }
