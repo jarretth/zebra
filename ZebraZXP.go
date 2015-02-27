@@ -132,6 +132,7 @@ func (z *ZebraZXP) PrintOneSideCard(frontSide GfxCallback) uint {
     z.getGraphicsHandle()
     gfxContext := newZXPSeries13GraphicsContext(z.graphicsHandle)
     defer gfxContext.CleanUp()
+    defer z.freeGraphicsHandle()
 
     frontSide(gfxContext)
     z.printAndClearGraphicsBuffer()
@@ -143,6 +144,7 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
     z.getGraphicsHandle()
     gfxContext := newZXPSeries13GraphicsContext(z.graphicsHandle)
     defer gfxContext.CleanUp()
+    defer z.freeGraphicsHandle()
 
     frontSide(gfxContext)
     z.printAndClearGraphicsBuffer()
