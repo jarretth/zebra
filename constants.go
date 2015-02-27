@@ -11,5 +11,3 @@ const (
 const (
     WAIT_NO_TIMEOUT = time.Duration(0)
 )
-
-

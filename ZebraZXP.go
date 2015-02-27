@@ -148,3 +148,47 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
 
     return 1
 }
+
+func (z *ZebraZXP) SupportsOneSidedPrinter() bool {
+    return true
+}
+
+func (z *ZebraZXP) GetOneSidedPrinter() OneSideCardPrinter {
+    return OneSideCardPrinter(z)
+}
+
+func (z *ZebraZXP) SupportsTwoSidedPrinter() bool {
+    z.getPrinterHandle()
+    return z.prn_type == zebrazxp13.TYPE_ZXP3_DUAL_SIDE
+}
+
+func (z *ZebraZXP) GetTwoSidedPrinter() TwoSideCardPrinter {
+    if !z.SupportsTwoSidedPrinter() {
+        return nil
+    }
+    return TwoSideCardPrinter(z)
+}
+
+func (z *ZebraZXP) SupportsMagStripeReader() bool {
+    return false
+}
+
+func (z *ZebraZXP) GetMagStripeReader() TwoSideCardPrinter {
+    return nil
+}
+
+func (z *ZebraZXP) SupportsMagStripeWriter() bool {
+    return false
+}
+
+func (z *ZebraZXP) GetMagStripeWriter() MagStripeWriter {
+    return nil
+}
+
+func (z *ZebraZXP) SupportsMagStripeReaderWriter() bool {
+    return false
+}
+
+func (z *ZebraZXP) GetMagStripeReaderWriter() MagStripeReaderWriter {
+    return nil
+}

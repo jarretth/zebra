@@ -12,7 +12,7 @@ type GraphicsHandle zebrazxp13.Handle
 
 type ZebraZXP struct {
     printerName string
-    prn_type uint
+    prn_type zebrazxp13.PrinterType
     printerHandle PrinterHandle
     graphicsHandle GraphicsHandle
 }
@@ -36,11 +36,43 @@ type Printer interface {
     IsPrinterReady() uint
     WaitForPrinter(timeout time.Duration)
     WaitIndefinitelyForPrinter()
+
+    SupportsOneSidedPrinter() bool
+    GetOneSidedPrinter() OneSideCardPrinter
+
+    SupportsTwoSidedPrinter() bool
+    GetTwoSidedPrinter() TwoSideCardPrinter
+
+    SupportsMagStripeReader() bool
+    GetMagStripeReader() TwoSideCardPrinter
+
+    SupportsMagStripeWriter() bool
+    GetMagStripeWriter() MagStripeWriter
+
+    SupportsMagStripeReaderWriter() bool
+    GetMagStripeReaderWriter() MagStripeReaderWriter
 }
 
-type CardPrinter interface {
+type OneSideCardPrinter interface {
     Printer
     EjectCard() uint
     PrintOneSideCard(frontSide GfxCallback) uint
+}
+
+type TwoSideCardPrinter interface {
+    OneSideCardPrinter
     PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback) uint
+}
+
+type MagStripeReader interface {
+
+}
+
+type MagStripeWriter interface {
+
+}
+
+type MagStripeReaderWriter interface {
+    MagStripeReader
+    MagStripeWriter
 }
