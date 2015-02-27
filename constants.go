@@ -13,5 +13,5 @@ const (
 )
 
 const (
-    ZXP13_DPI = 320
+    ZXP13_DPI = 300
 )
