@@ -33,6 +33,8 @@ type GfxContext interface {
 }
 
 type Printer interface {
+    CleanUp()
+
     IsPrinterReady() uint
     WaitForPrinter(timeout time.Duration)
     WaitIndefinitelyForPrinter()
