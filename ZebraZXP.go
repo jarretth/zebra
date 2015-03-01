@@ -126,6 +126,18 @@ func (z *ZebraZXP) WaitForPrinter(timeout time.Duration) {
     }
 }
 
+func (z *ZebraZXP) In(inches float64) int {
+    return Inch(inches).Pixels(z.DPI())
+}
+
+func (z *ZebraZXP) Mm(millimeters float64) int {
+    return Millimeter(millimeters).Pixels(z.DPI())
+}
+
+func (z *ZebraZXP) Px(pixels int) int {
+    return Pixel(pixels).Pixels(z.DPI())
+}
+
 func (z *ZebraZXP) PrintOneSideCard(frontSide GfxCallback) uint {
     z.getGraphicsHandle()
     gfxContext := newZXPSeries13GraphicsContext(z.graphicsHandle)
