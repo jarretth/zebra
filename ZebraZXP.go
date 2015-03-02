@@ -99,31 +99,37 @@ func (z *ZebraZXP) EjectCard() uint {
     return uint(ret)
 }
 
-func (z *ZebraZXP) WaitIndefinitelyForPrinter() {
-    z.WaitForPrinter(WAIT_NO_TIMEOUT)
+func (z *ZebraZXP) WaitIndefinitelyForPrinter() <- chan bool {
+    return z.WaitForPrinter(WAIT_NO_TIMEOUT)
 }
 
-func (z *ZebraZXP) WaitForPrinter(timeout time.Duration) {
+func (z *ZebraZXP) WaitForPrinter(timeout time.Duration) <- chan bool {
+    done := make(chan bool)
     var elapsed time.Duration = 0
     var wait time.Duration    = time.Second / 2
-    for ;; {
-        time.Sleep(wait)
-        elapsed += wait
-        if z.IsPrinterReady() == 1 {
-            break
-        }
-        if timeout != WAIT_NO_TIMEOUT {
-            if elapsed >= timeout {
-                panic(ERR_TIMEOUT)
+    go func() {
+        for {
+            time.Sleep(wait)
+            elapsed += wait
+            if z.IsPrinterReady() == 1 {
+                done <- true
+                break
             }
-            if (elapsed + wait) > timeout {
-                wait = timeout - elapsed
-                if wait <= time.Millisecond {
-                    wait = time.Millisecond
+            if timeout != WAIT_NO_TIMEOUT {
+                if elapsed >= timeout {
+                    done <- false
+                    panic(ERR_TIMEOUT)
+                }
+                if (elapsed + wait) > timeout {
+                    wait = timeout - elapsed
+                    if wait <= time.Millisecond {
+                        wait = time.Millisecond
+                    }
                 }
             }
         }
-    }
+    }()
+    return done
 }
 
 func (z *ZebraZXP) In(inches float64) int {
@@ -138,7 +144,7 @@ func (z *ZebraZXP) Px(pixels int) int {
     return Pixel(pixels).Pixels(z.DPI())
 }
 
-func (z *ZebraZXP) PrintOneSideCard(frontSide GfxCallback) uint {
+func (z *ZebraZXP) PrintOneSideCard(frontSide GfxCallback) <- chan bool {
     z.getGraphicsHandle()
     gfxContext := newZXPSeries13GraphicsContext(z.graphicsHandle)
     defer gfxContext.CleanUp()
@@ -147,10 +153,10 @@ func (z *ZebraZXP) PrintOneSideCard(frontSide GfxCallback) uint {
     frontSide(gfxContext)
     z.printAndClearGraphicsBuffer()
 
-    return 1
+    return z.WaitIndefinitelyForPrinter()
 }
 
-func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback) uint {
+func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback) <- chan bool {
     z.getGraphicsHandle()
     gfxContext := newZXPSeries13GraphicsContext(z.graphicsHandle)
     defer gfxContext.CleanUp()
@@ -162,7 +168,7 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
     backSide(gfxContext)
     z.printAndClearGraphicsBuffer()
 
-    return 1
+    return z.WaitIndefinitelyForPrinter()
 }
 
 func (z *ZebraZXP) SupportsOneSidedPrinter() bool {

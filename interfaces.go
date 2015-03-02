@@ -29,8 +29,8 @@ type Printer interface {
     Px(pixels int) int
 
     IsPrinterReady() uint
-    WaitForPrinter(timeout time.Duration)
-    WaitIndefinitelyForPrinter()
+    WaitForPrinter(timeout time.Duration) <- chan bool
+    WaitIndefinitelyForPrinter() <- chan bool
 
     SupportsOneSidedPrinter() bool
     GetOneSidedPrinter() OneSideCardPrinter
@@ -51,12 +51,12 @@ type Printer interface {
 type OneSideCardPrinter interface {
     Printer
     EjectCard() uint
-    PrintOneSideCard(frontSide GfxCallback) uint
+    PrintOneSideCard(frontSide GfxCallback) <- chan bool
 }
 
 type TwoSideCardPrinter interface {
     OneSideCardPrinter
-    PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback) uint
+    PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback) <- chan bool
 }
 
 type MagStripeReader interface {
