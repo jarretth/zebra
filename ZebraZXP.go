@@ -176,6 +176,7 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
 }
 
 func (z *ZebraZXP) SupportsOneSidedPrinter() bool {
+    z.getPrinterHandle()
     return true
 }
 
