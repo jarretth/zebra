@@ -175,18 +175,30 @@ func (z *ZebraZXP) PrintTwoSideCard(frontSide GfxCallback, backSide GfxCallback)
     return z.WaitIndefinitelyForPrinter()
 }
 
-func (z *ZebraZXP) SupportsOneSidedPrinter() bool {
+func (z *ZebraZXP) SupportsOneSidedPrinter() (ret bool) {
+    defer func() {
+        if r := recover(); r != nil {
+            ret = false
+        }
+    }()
     z.getPrinterHandle()
-    return true
+    ret = true
+    return ret
 }
 
 func (z *ZebraZXP) GetOneSidedPrinter() OneSideCardPrinter {
     return OneSideCardPrinter(z)
 }
 
-func (z *ZebraZXP) SupportsTwoSidedPrinter() bool {
+func (z *ZebraZXP) SupportsTwoSidedPrinter() (ret bool) {
+    defer func() {
+        if r := recover(); r != nil {
+            ret = false
+        }
+    }()
     z.getPrinterHandle()
-    return z.prn_type == zebrazxp13.TYPE_ZXP3_DUAL_SIDE
+    ret = (z.prn_type == zebrazxp13.TYPE_ZXP3_DUAL_SIDE)
+    return ret
 }
 
 func (z *ZebraZXP) GetTwoSidedPrinter() TwoSideCardPrinter {
