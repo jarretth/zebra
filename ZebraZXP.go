@@ -13,6 +13,10 @@ func NewZebraZXP(printerName string) *ZebraZXP {
     return printer
 }
 
+func (z *ZebraZXP) Name() string {
+    return z.printerName
+}
+
 func (z *ZebraZXP) getGraphicsHandle() {
     if z.graphicsHandle != 0 {
         return

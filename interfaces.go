@@ -21,6 +21,7 @@ type Measurement interface {
 }
 
 type Printer interface {
+    Name() string
     CleanUp()
 
     DPI() int
