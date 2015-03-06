@@ -6,8 +6,8 @@ import (
     "image/color"
 )
 
-func newZXPSeries13GraphicsContext(handle GraphicsHandle) (*ZebraZXPSeries13GfxContext) {
-    context := &ZebraZXPSeries13GfxContext {
+func newZXPSeries13GraphicsContext(handle GraphicsHandle) *ZebraZXPSeries13GfxContext {
+    context := &ZebraZXPSeries13GfxContext{
         graphicsHandle: handle,
     }
     return context

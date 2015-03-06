@@ -5,7 +5,7 @@ import (
 )
 
 const (
-    ERR_TIMEOUT = iota
+    ERR_TIMEOUT ZebraError = iota
 )
 
 const (
