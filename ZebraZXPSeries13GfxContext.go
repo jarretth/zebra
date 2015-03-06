@@ -52,8 +52,8 @@ func (g *ZebraZXPSeries13GfxContext) DrawTextRectangle(rect image.Rectangle, ali
     uret, err := zebrazxp13.ZBRGDIDrawTextRect(
         uint(rect.Min.X),
         uint(rect.Min.Y),
-        uint(rect.Max.X),
-        uint(rect.Max.Y),
+        uint(rect.Dx()),
+        uint(rect.Dy()),
         alignment,
         text,
         font,
@@ -86,8 +86,8 @@ func (g *ZebraZXPSeries13GfxContext) DrawRectangle(rect image.Rectangle, color c
     uret, err := zebrazxp13.ZBRGDIDrawRectangle(
         uint(rect.Min.X),
         uint(rect.Min.Y),
-        uint(rect.Max.X),
-        uint(rect.Max.Y),
+        uint(rect.Dx()),
+        uint(rect.Dy()),
         thickness,
         getColor(color),
     )
@@ -101,8 +101,8 @@ func (g *ZebraZXPSeries13GfxContext) DrawEllipse(rect image.Rectangle, color col
     uret, err := zebrazxp13.ZBRGDIDrawEllipse(
         uint(rect.Min.X),
         uint(rect.Min.Y),
-        uint(rect.Max.X),
-        uint(rect.Max.Y),
+        uint(rect.Dx()),
+        uint(rect.Dy()),
         thickness,
         getColor(color),
     )
