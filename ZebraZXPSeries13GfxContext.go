@@ -4,7 +4,23 @@ import (
     "github.com/jarretth/zebrazxp13"
     "image"
     "image/color"
+    "unicode/utf16"
 )
+
+func convertToUtf16(i string) string {
+    b := utf16.Encode([]rune(i))
+    output := make([]byte, 0)
+    for i := range b {
+        var h, l byte = byte(b[i] >> 8), byte(b[i] & 0xFF)
+        if h == 0 {
+            output = append(output, l)
+        } else {
+            output = append(output, h)
+            output = append(output, l)
+        }
+    }
+    return string(append(output, []byte{0, 0}...))
+}
 
 func newZXPSeries13GraphicsContext(handle GraphicsHandle) *ZebraZXPSeries13GfxContext {
     context := &ZebraZXPSeries13GfxContext{
@@ -55,7 +71,7 @@ func (g *ZebraZXPSeries13GfxContext) DrawTextRectangle(rect image.Rectangle, ali
         uint(rect.Dx()),
         uint(rect.Dy()),
         alignment,
-        text,
+        convertToUtf16(text),
         font,
         fontsize,
         fontstyle,
